@@ -2,6 +2,7 @@ import React, {useEffect} from 'react'
 import styled from '@emotion/styled'
 import { gql, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+import PokemonLayout from '../layouts/pokemon-layout';
 
 const GET_POKEMONS = gql`
   query pokemons($limit: Int, $offset: Int) {
@@ -19,8 +20,8 @@ const GET_POKEMONS = gql`
 `
 
 const PokeballImage = styled.img`
-width: 250px;
-height: 250px;
+width: 50px;
+height: 50px;
 -webkit-animation-name: spin;
 -webkit-animation-duration: 4000ms;
 -webkit-animation-iteration-count: infinite;
@@ -107,60 +108,82 @@ export default function PokemonList() {
     variables: { limit, offset },
   })
 
-  if (loading) return (
-    <div css={{height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      <PokeballImage src="/pokeball.png" />
-    </div>
-  )
+  const[pokemonList, setPokemonList] = React.useState([])
+
+  useEffect(() => {
+    if(loading === false && pokemons) {
+      if(pokemonList.length > 0) {
+        setPokemonList([...pokemonList, ...pokemons.results])
+      }
+      else setPokemonList(pokemons.results) 
+    }
+  }, [loading, pokemons])
+
   if (error) return `Error! ${error.message}`
 
   return (
-    <div css={{
-      display: 'flex', 
-      flexDirection: 'row', 
-      justifyContent: 'space-between', 
-      flexWrap: 'wrap',
-      gap: '8px',
-      paddingLeft: '12px',
-      paddingTop: '12px',
-      paddingRight: '12px',
-      overflowY: 'auto',
-      height: '100vh'
-    }}>
-      <div css={{width: '100%', height: '10vh'}}></div>
-      {pokemons.results.map((pokemon) => (
-        <PokemonCard 
-          key={pokemon.name} 
-          onClick={() => {
-            router.push({
-              pathname: '/pokemon-detail',
-              query: { name: pokemon.name }
-          })
-          }}>
-          <div>
-            <div css={{fontSize: '2vw', margin: '0px'}}>
-              #{pokemon.id.toString().padStart(3, '0')}
-            </div>
-            <div css={{fontSize: '2.5vw', margin: '0px'}}>
-              {pokemon.name}
-            </div>
-          </div>
-          <img css={{width: '15vw'}} src={pokemon.image} />        
-        </PokemonCard>
-      ))}
+    <PokemonLayout>
       <div css={{
         display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        width: '100%'
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        flexWrap: 'wrap',
+        gap: '8px',
+        paddingLeft: '12px',
+        paddingTop: '12px',
+        paddingRight: '12px',
+        overflowY: 'auto',
+        height: '100vh'
       }}>
-        <PrimaryButton onClick={() => {
-          setLimit(limit + 20)
-        }}
-        >
-          Load More
-        </PrimaryButton>
+        <div css={{width: '100%', height: '10vh'}}></div>
+        {
+          pokemonList.length > 0 ?
+            pokemonList.map((pokemon) => (
+              <PokemonCard 
+                key={pokemon.id} 
+                onClick={() => {
+                  router.push({
+                    pathname: '/pokemon-detail',
+                    query: { name: pokemon.name }
+                })
+                }}>
+                <div>
+                  <div css={{fontSize: '2vw', margin: '0px'}}>
+                    #{pokemon.id.toString().padStart(3, '0')}
+                  </div>
+                  <div css={{fontSize: '2.5vw', margin: '0px'}}>
+                    {pokemon.name}
+                  </div>
+                </div>
+                <img css={{width: '15vw'}} src={pokemon.image} />        
+              </PokemonCard>
+            ))
+            : ''
+        }
+        <div css={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center',
+          width: '100%'
+        }}>
+          {
+            loading ?
+            <div css={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <PokeballImage src="/pokeball.png" />
+            </div>
+            :
+            ''
+          }
+          <PrimaryButton onClick={() => {
+            setLimit(limit)
+            setOffset(offset + 20)
+          }}
+          >
+            Load More
+          </PrimaryButton>
+        </div>
       </div>
-    </div>
+    </PokemonLayout>
   )
 }

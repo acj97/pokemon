@@ -20,7 +20,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 20px;
+  width: 0px;
   z-index: 4;
   background-color: transparent;
 }
@@ -128,4 +128,22 @@ body {
 .water {
   background: #539DDF;
   /* box-shadow: 0 0 10px #539DDF; */
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height: 100%;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.display-block {
+  display: block;
+}
+
+.display-none {
+  display: none;
 }

@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import { gql, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import PokemonLayout from '../layouts/pokemon-layout';
+import Modal from './modal.js';
 
 const GET_POKEMON = gql`
   query pokemon($name: String!) {
@@ -70,8 +71,38 @@ animation-timing-function: linear;
   to {transform:rotate(360deg);}
 }`
 
-export default function PokemonList(props) {
+const PokeballText = styled.div`
+  margin-top: -34px;
+  margin-left: 18px;
+  position: absolute;
+  font-size: 16px;
+  color: black;
 
+  -webkit-animation: shake .5s infinite alternate;
+  /* Chrome, Safari, Opera */
+
+  animation: shake .5s infinite alternates;
+
+  @keyframes shake {
+    0% {
+      transform: rotate(7deg);
+    }
+    25% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(-7deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+`
+
+export default function PokemonDetail() {
+  const [show, setShow] = React.useState(false)
+  const [nickname, setNickname] = React.useState('')
+  const [catchedPokemon, setCatchedPokemon] = React.useState({})
   const router = useRouter()
   
   const { loading, error, data: { pokemon = {} } = {} } = useQuery(GET_POKEMON, {
@@ -84,6 +115,21 @@ export default function PokemonList(props) {
     </div>
   )
   if (error) return `Error! ${error.message}`
+
+  function closeModal() {
+    setShow(false)
+  }
+
+  function catchPokemon(pokemon) {
+    let rand = Math.random() < 0.5
+
+    
+
+    if(rand) {
+      setCatchedPokemon(pokemon)
+      setShow(true)
+    }
+  }
   
   return (
     <PokemonLayout>
@@ -94,6 +140,9 @@ export default function PokemonList(props) {
         overflowY: 'hidden',
         height: '100vh'
       }}>
+        <Modal show={show} closeModal={closeModal} nickname={nickname} catchedPokemon={catchedPokemon}>
+          <input value={nickname} onChange={(e) => setNickname(e.target.value)} />
+        </Modal>
         <div css={{
           color: 'white', 
           backgroundImage: `url(terrain${Math.floor((Math.random() * 5) + 1) + ''}.png)`, 
@@ -118,8 +167,55 @@ export default function PokemonList(props) {
           marginTop: '-20px',
           overflowY: 'auto'
         }}>
+          <div
+            css={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              marginTop: '-90px',
+              left: '0',
+              width: '100%',
+            }}
+          >
+            <div
+              css={{
+                background: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                borderRadius: '50%',
+                color: 'white',
+                width: '120px',
+                height: '120px'
+              }}
+            >
+              <div 
+                onClick={() => {
+                  catchPokemon(pokemon)}
+                }
+                css={{
+                  cursor: 'pointer'
+                }}
+              >
+                <img
+                  css={{
+                    width: '90px',
+                    height: '90px'
+                  }} 
+                  src="pokeball.png" 
+                />
+                <PokeballText>
+                  <b>Catch</b>
+                </PokeballText> 
+              </div>
+              
+            </div>
+          </div>
           <div css={{textAlign: 'center', color: 'black'}}>
-            <h2 css={{margin: '0px 0px 12px 0px'}}>
+            <h2 css={{margin: '32px 0px 12px 0px'}}>
               {
                 pokemon.name
               }
@@ -129,6 +225,7 @@ export default function PokemonList(props) {
               {
                 pokemon.types.map((e) => (
                   <div 
+                    key={e.type.name}
                     className={e.type.name}
                     css={{
                       borderRadius: '50px',
@@ -160,6 +257,7 @@ export default function PokemonList(props) {
                 {
                   pokemon.abilities.map((e) => (
                     <div 
+                      key={e.ability.name}
                       css={{
                         background: '#C4BDAC',
                         borderRadius: '50px',
@@ -183,6 +281,7 @@ export default function PokemonList(props) {
                 {
                   pokemon.stats.map((e) => (
                     <div 
+                      key={e.stat.name}
                       css={{
                         display: 'flex',
                         alignItems: 'center',
@@ -193,10 +292,14 @@ export default function PokemonList(props) {
                       <div 
                         css={{
                           marginRight: '16px',
-                          width: '150px'
+                          width: '150px',
+                          backgroundColor: '#DDDDD2',
+                          borderRadius: '10px'
                         }}
                       >
-                        {e.stat.name} 
+                        {!e.stat.name.includes('special') ? e.stat.name : ''}
+                        {e.stat.name == 'special-attack' ? 'sp.atk' : ''}
+                        {e.stat.name == 'special-defense' ? 'sp.def' : ''}
                       </div>
                       <div css={{
                         width: '100%',
@@ -226,10 +329,8 @@ export default function PokemonList(props) {
                 }
               </div>
             </div>
-            
           </div>
         </div>
-        
       </div>
     </PokemonLayout>
   )
