@@ -90,10 +90,19 @@ export default function PokemonList() {
                     })
                   }}
                 >
-                  <div css={{fontSize: '1.5vw', margin: '0px', marginTop: '8px'}}>
-                    Owned:&nbsp;
-                    {ownedPokemons.hasOwnProperty(pokemon.name) ? ownedPokemons[pokemon.name].length : 0}
-                  </div>     
+                  <div>
+                    <div css={{fontSize: '2vw', margin: '0px'}}>
+                      #{pokemon.id.toString().padStart(3, '0')}
+                    </div>
+                    <div css={{fontSize: '2.5vw', margin: '0px'}}>
+                      {pokemon.name}
+                    </div>
+                    <div css={{fontSize: '1.5vw', margin: '0px', marginTop: '8px'}}>
+                      Owned:&nbsp;
+                      {ownedPokemons.hasOwnProperty(pokemon.name) ? ownedPokemons[pokemon.name].length : 0}
+                    </div>     
+                  </div>
+                  <img css={{width: '15vw'}} src={pokemon.image} /> 
                 </PokemonCard>
               ))
               : ''

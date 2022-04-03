@@ -90,25 +90,33 @@ export default function MyPokemons() {
                 <PokemonCard 
                   pokemon={pokemon}
                 >
-                  <div css={{fontSize: '1.5vw', margin: '0px', marginTop: '8px'}}>
-                    nickname:
+                  <div>
+                    <div css={{fontSize: '2vw', margin: '0px'}}>
+                      #{pokemon.id.toString().padStart(3, '0')}
+                    </div>
+                    <div css={{fontSize: '2.5vw', margin: '0px'}}>
+                      {pokemon.name}
+                    </div>
+                    <div css={{fontSize: '1.5vw', margin: '0px', marginTop: '8px'}}>
+                      nickname:
+                    </div>
+                    <div css={{fontSize: '2.5vw'}}>{truncateString(pokemon.nickname, 10)}</div>
+                    <PrimaryButton 
+                      style={{
+                        margin: '0px',
+                        fontSize: '8px',
+                        padding: '8px 16px',
+                        marginTop: '8px',
+                        width: 'fit-content'
+                      }}
+                      onClick={() => {
+                        setShow(true)
+                      }}
+                    >
+                      Release
+                    </PrimaryButton>  
                   </div>
-                  <div css={{fontSize: '2.5vw'}}>{truncateString(pokemon.nickname, 10)}</div>
-
-                  <PrimaryButton 
-                    style={{
-                      margin: '0px',
-                      fontSize: '8px',
-                      padding: '8px 16px',
-                      marginTop: '8px',
-                      width: 'fit-content'
-                    }}
-                    onClick={() => {
-                      setShow(true)
-                    }}
-                  >
-                    Release
-                  </PrimaryButton>  
+                  <img css={{width: '15vw'}} src={pokemon.image} />
                 </PokemonCard>
               </React.Fragment>
             ))

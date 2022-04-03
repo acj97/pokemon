@@ -34,16 +34,7 @@ export default function PokemonCard({pokemon, children, onClick}) {
     <Card
       onClick={() => typeof onClick  === 'function' ? onClick() : ''}
     >
-      <div>
-        <div css={{fontSize: '2vw', margin: '0px'}}>
-          #{pokemon.id.toString().padStart(3, '0')}
-        </div>
-        <div css={{fontSize: '2.5vw', margin: '0px'}}>
-          {pokemon.name}
-        </div>
-        {children}
-      </div>
-      <img css={{width: '15vw'}} src={pokemon.image} />        
+      {children}       
     </Card>
   )
 }
