@@ -153,7 +153,7 @@ export default function PokemonDetail() {
         overflowY: 'hidden',
         height: '100vh'
       }}>
-        <Modal show={show} closeModal={closeModal} nickname={nickname} catchedPokemon={catchedPokemon}>
+        <Modal show={show}>
           <h3>
             gotcha!<br/> 
             {catchedPokemon.name} was caught!

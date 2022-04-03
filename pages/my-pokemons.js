@@ -2,9 +2,11 @@ import React, {useEffect} from 'react'
 import PokemonLayout from '../layouts/pokemon-layout'
 import PokemonCard from './components/pokemon-card'
 import PrimaryButton from './components/primary-button'
+import Modal from './components/modal.js'
 
 export default function MyPokemons() {
   const [ownedPokemons, setOwnedPokemons] = React.useState([])
+  const [show, setShow] = React.useState(false)
 
   useEffect(() => {
     if(typeof window !== 'undefined' && localStorage.getItem('myPokemons'))
@@ -15,6 +17,7 @@ export default function MyPokemons() {
     let newArr = ownedPokemons.filter( searchItem => searchItem.nickname !== nickname )
     localStorage.setItem('myPokemons', JSON.stringify(newArr))
     setOwnedPokemons(newArr)
+    setShow(false)
   }
 
   function truncateString(string, limit) {
@@ -49,9 +52,42 @@ export default function MyPokemons() {
         >
           {
             ownedPokemons.length > 0 ?
-              ownedPokemons.map((pokemon) => (
+            ownedPokemons.map((pokemon) => (
+              <React.Fragment key={pokemon.nickname}>
+                <Modal 
+                  show={show}
+                >
+                  <h3>
+                    {pokemon.nickname} will be released in the wild are you sure?
+                  </h3>
+                  <div
+                    css={{display: 'flex', width: '100%'}}
+                  >
+                    <PrimaryButton 
+                      onClick={() => setShow(false)}
+                      style={{
+                        width: 'fit-content',
+                        margin: '12px 0px 0px 0px',
+                        padding: '8px',
+                        marginLeft: 'auto',
+                        backgroundColor: 'rgb(219, 80, 74, 0.7)'
+                      }}
+                    >
+                      Cancel
+                    </PrimaryButton>
+                    <PrimaryButton 
+                      onClick={() => releasePokemon(pokemon.nickname)}
+                      style={{
+                        width: 'fit-content',
+                        margin: '12px 0px 0px 12px',
+                        padding: '8px'
+                      }}
+                    >
+                      Release
+                    </PrimaryButton>
+                  </div>
+                </Modal>
                 <PokemonCard 
-                  key={pokemon.nickname} 
                   pokemon={pokemon}
                 >
                   <div css={{fontSize: '1.5vw', margin: '0px', marginTop: '8px'}}>
@@ -68,29 +104,30 @@ export default function MyPokemons() {
                       width: 'fit-content'
                     }}
                     onClick={() => {
-                      releasePokemon(pokemon.nickname)
+                      setShow(true)
                     }}
                   >
                     Release
                   </PrimaryButton>  
                 </PokemonCard>
-              ))
-              : 
-              <div 
-                css={{
-                  width: '100%', 
-                  color: 'white', 
-                  display: 'flex', 
-                  alignItems:'center', 
-                  justifyContent: 'center',
-                  height: '90vh'
-                }}
-              >
-                <div css={{textAlign: 'center'}}>
-                  you don&apos;t have any pokemon.<br/>
-                  catch one in the wild!
-                </div>
+              </React.Fragment>
+            ))
+            : 
+            <div 
+              css={{
+                width: '100%', 
+                color: 'white', 
+                display: 'flex', 
+                alignItems:'center', 
+                justifyContent: 'center',
+                height: '90vh'
+              }}
+            >
+              <div css={{textAlign: 'center'}}>
+                you don&apos;t have any pokemon.<br/>
+                catch one in the wild!
               </div>
+            </div>
           }
         </div>
       </div>

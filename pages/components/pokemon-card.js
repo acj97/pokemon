@@ -21,7 +21,7 @@ const Card = styled.div`
   &:hover {
     color: white;
     border-color: #db504a;
-    background: linear-gradient(80deg, #db504a 50%, #db504a30 0%);
+    background: linear-gradient(80deg, rgb(219, 80, 74, 0.8) 50%, #db504a30 0%);
   }
 
   @media (min-width: 420px) {
