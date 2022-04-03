@@ -2,8 +2,10 @@ import React, {useEffect} from 'react'
 import styled from '@emotion/styled'
 import { gql, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import PokemonLayout from '../layouts/pokemon-layout';
-import Modal from './components/modal.js';
+import PokemonLayout from '../layouts/pokemon-layout'
+import Modal from './components/modal.js'
+import PrimaryButton from './components/primary-button'
+import PokeballImage from './components/pokeball-image'
 
 const GET_POKEMON = gql`
   query pokemon($name: String!) {
@@ -43,39 +45,6 @@ const GET_POKEMON = gql`
   }
 `
 
-const PokeballImage = styled.img`
-width: 50px;
-height: 50px;
--webkit-animation-name: spin;
--webkit-animation-duration: 4000ms;
--webkit-animation-iteration-count: infinite;
--webkit-animation-timing-function: linear;
--moz-animation-name: spin;
--moz-animation-duration: 4000ms;
--moz-animation-iteration-count: infinite;
--moz-animation-timing-function: linear;
--ms-animation-name: spin;
--ms-animation-duration: 4000ms;
--ms-animation-iteration-count: infinite;
--ms-animation-timing-function: linear;
-
-animation-name: spin;
-animation-duration: 4000ms;
-animation-iteration-count: infinite;
-animation-timing-function: linear;
-@-moz-keyframes spin {
-  from { -moz-transform: rotate(0deg); }
-  to { -moz-transform: rotate(360deg); }
-}
-@-webkit-keyframes spin {
-  from { -webkit-transform: rotate(0deg); }
-  to { -webkit-transform: rotate(360deg); }
-}
-@keyframes spin {
-  from {transform:rotate(0deg);}
-  to {transform:rotate(360deg);}
-}`
-
 const PokeballText = styled.div`
   margin-top: -34px;
   margin-left: 18px;
@@ -101,34 +70,6 @@ const PokeballText = styled.div`
     100% {
       transform: rotate(0deg);
     }
-  }
-`
-
-const PrimaryButton = styled.button`
-  width: 250px;
-  background-color: rgb(219, 80, 74, 0.9);
-  border: 1px solid #db504a;
-  border-radius: 10px;
-  color: white;
-  padding: 16px 16px 16px 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-  font-family: 'slkscr';
-
-  &:focus,
-  &:active,
-  &:hover {
-    background: #db504a;
-  }
-  &:disabled,
-  &[disabled]{
-    cursor: no-drop;
-    border: 1px solid #999999;
-    background-color: #cccccc;
-    color: #666666;
   }
 `
 
@@ -233,16 +174,16 @@ export default function PokemonDetail() {
           </div>
           <PrimaryButton 
             onClick={() => submit()}
-            type="button"
-            css={{
+            style={{
               width: '100%',
-              marginTop: '12px'
+              margin: '12px 0px 0px 0px'
             }}
-
-            disabled={nickname != '' && errorMessage == '' ?
-            false
-            :
-            true}
+            disabled={
+            nickname != '' && errorMessage == '' ?
+              false
+              :
+              true
+            }
           >
             Save to Bag
           </PrimaryButton>

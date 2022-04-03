@@ -1,0 +1,49 @@
+import styled from '@emotion/styled'
+
+const Card = styled.div`
+  padding: 0.5rem;
+  text-align: left;
+  color: white;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  background: linear-gradient(80deg, #db504a80 50%, #db504a30 0%);
+  border: 1px solid #db504a;
+  border-radius: 10px;
+  width: 48%;
+  display: flex;
+  height: 100px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  cursor: pointer;
+  &:focus,
+  &:active,
+  &:hover {
+    color: white;
+    border-color: #db504a;
+    background: linear-gradient(80deg, #db504a 50%, #db504a30 0%);
+  }
+
+  @media (min-width: 420px) {
+    height: 175px;
+  }
+`
+
+export default function PokemonCard({pokemon, children, onClick}) {
+  return (
+    <Card
+      onClick={() => typeof onClick  === 'function' ? onClick() : ''}
+    >
+      <div>
+        <div css={{fontSize: '2vw', margin: '0px'}}>
+          #{pokemon.id.toString().padStart(3, '0')}
+        </div>
+        <div css={{fontSize: '2.5vw', margin: '0px'}}>
+          {pokemon.name}
+        </div>
+        {children}
+      </div>
+      <img css={{width: '15vw'}} src={pokemon.image} />        
+    </Card>
+  )
+}

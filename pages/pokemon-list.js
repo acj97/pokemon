@@ -1,9 +1,10 @@
 import React, {useEffect} from 'react'
-import styled from '@emotion/styled'
 import { gql, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import PokemonLayout from '../layouts/pokemon-layout';
-
+import PokemonLayout from '../layouts/pokemon-layout'
+import PokemonCard from './components/pokemon-card'
+import PrimaryButton from './components/primary-button'
+import PokeballImage from './components/pokeball-image'
 const GET_POKEMONS = gql`
   query pokemons($limit: Int, $offset: Int) {
     pokemons(limit: $limit, offset: $offset) {
@@ -16,90 +17,6 @@ const GET_POKEMONS = gql`
         image
       }
     }
-  }
-`
-
-const PokeballImage = styled.img`
-width: 50px;
-height: 50px;
--webkit-animation-name: spin;
--webkit-animation-duration: 4000ms;
--webkit-animation-iteration-count: infinite;
--webkit-animation-timing-function: linear;
--moz-animation-name: spin;
--moz-animation-duration: 4000ms;
--moz-animation-iteration-count: infinite;
--moz-animation-timing-function: linear;
--ms-animation-name: spin;
--ms-animation-duration: 4000ms;
--ms-animation-iteration-count: infinite;
--ms-animation-timing-function: linear;
-
-animation-name: spin;
-animation-duration: 4000ms;
-animation-iteration-count: infinite;
-animation-timing-function: linear;
-@-moz-keyframes spin {
-  from { -moz-transform: rotate(0deg); }
-  to { -moz-transform: rotate(360deg); }
-}
-@-webkit-keyframes spin {
-  from { -webkit-transform: rotate(0deg); }
-  to { -webkit-transform: rotate(360deg); }
-}
-@keyframes spin {
-  from {transform:rotate(0deg);}
-  to {transform:rotate(360deg);}
-}`
-
-const PokemonCard = styled.div`
-  padding: 0.5rem;
-  text-align: left;
-  color: white;
-  text-decoration: none;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  background: linear-gradient(80deg, #db504a80 50%, #db504a30 0%);
-  border: 1px solid #db504a;
-  border-radius: 10px;
-  width: 48%;
-  display: flex;
-  height: 100px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  cursor: pointer;
-  &:focus,
-  &:active,
-  &:hover {
-    color: white;
-    border-color: #db504a;
-    background: linear-gradient(80deg, #db504a 50%, #db504a30 0%);
-  }
-
-  @media (min-width: 420px) {
-    height: 175px;
-  }
-`
-
-const PrimaryButton = styled.button`
-  width: 250px;
-  background-color: rgb(219, 80, 74, 0.9);
-  border: 1px solid #db504a;
-  border-radius: 10px;
-  color: white;
-  padding: 16px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-  margin: 16px;
-  font-family: 'slkscr';
-
-  &:focus,
-  &:active,
-  &:hover {
-    background: #db504a;
   }
 `
 
@@ -165,25 +82,18 @@ export default function PokemonList() {
               pokemonList.map((pokemon) => (
                 <PokemonCard 
                   key={pokemon.id} 
+                  pokemon={pokemon}
                   onClick={() => {
                     router.push({
                       pathname: '/pokemon-detail',
                       query: { name: pokemon.name }
-                  })
-                  }}>
-                  <div>
-                    <div css={{fontSize: '2vw', margin: '0px'}}>
-                      #{pokemon.id.toString().padStart(3, '0')}
-                    </div>
-                    <div css={{fontSize: '2.5vw', margin: '0px'}}>
-                      {pokemon.name}
-                    </div>
-                    <div css={{fontSize: '1.5vw', margin: '0px', marginTop: '8px'}}>
-                      Owned:&nbsp;
-                      {ownedPokemons.hasOwnProperty(pokemon.name) ? ownedPokemons[pokemon.name].length : 0}
-                    </div>
-                  </div>
-                  <img css={{width: '15vw'}} src={pokemon.image} />        
+                    })
+                  }}
+                >
+                  <div css={{fontSize: '1.5vw', margin: '0px', marginTop: '8px'}}>
+                    Owned:&nbsp;
+                    {ownedPokemons.hasOwnProperty(pokemon.name) ? ownedPokemons[pokemon.name].length : 0}
+                  </div>     
                 </PokemonCard>
               ))
               : ''
@@ -198,13 +108,14 @@ export default function PokemonList() {
             {
               loading ?
               <div css={{height: pokemonList.length == 0 ? '60vh' : '', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <PokeballImage src="/pokeball.png" />
+                <PokeballImage />
               </div>
               :
-              <PrimaryButton onClick={() => {
-                setLimit(limit)
-                setOffset(offset + 20)
-              }}
+              <PrimaryButton 
+                onClick={() => {
+                  setLimit(limit)
+                  setOffset(offset + 20)
+                }}
               >
                 Load More
               </PrimaryButton>
