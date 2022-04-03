@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { gql, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import PokemonLayout from '../layouts/pokemon-layout';
-import Modal from './modal.js';
+import Modal from './components/modal.js';
 
 const GET_POKEMON = gql`
   query pokemon($name: String!) {
@@ -104,14 +104,76 @@ const PokeballText = styled.div`
   }
 `
 
+const PrimaryButton = styled.button`
+  width: 250px;
+  background-color: rgb(219, 80, 74, 0.9);
+  border: 1px solid #db504a;
+  border-radius: 10px;
+  color: white;
+  padding: 16px 16px 16px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: 'slkscr';
+
+  &:focus,
+  &:active,
+  &:hover {
+    background: #db504a;
+  }
+  &:disabled,
+  &[disabled]{
+    cursor: no-drop;
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+  }
+`
+
 export default function PokemonDetail() {
   const [show, setShow] = React.useState(false)
   const [nickname, setNickname] = React.useState('')
   const [catchedPokemon, setCatchedPokemon] = React.useState({})
   const [randomNumber, setRandomNumber] = React.useState(0)
   const [text, setText] = React.useState('')
+  const [errorMessage, setErrorMessage] = React.useState('')
 
   const router = useRouter()
+
+  useEffect(() => {
+    checkDuplicate()
+  }, [nickname])
+
+  function checkDuplicate() {
+    let arr = typeof window !== 'undefined' && localStorage.getItem('myPokemons') ? JSON.parse(localStorage.getItem('myPokemons')) : []
+    let check = false
+    for(let i=0; i<arr.length; i++) {
+      if(arr[i].nickname == nickname.toUpperCase()) {
+        setErrorMessage('you already have pokemon nicknamed ' + nickname + '!')
+        check = true
+      }
+    }
+
+    if(!check || nickname == '') setErrorMessage('')
+    return check
+  }
+
+  function submit() {
+    let obj = {
+      id: catchedPokemon.id,
+      nickname: nickname.toUpperCase(),
+      name: catchedPokemon.name,
+      image: catchedPokemon.sprites.front_default 
+    }
+    
+    let arr = typeof window !== 'undefined' && localStorage.getItem('myPokemons') ? JSON.parse(localStorage.getItem('myPokemons')) : []
+    arr.push(obj)
+    localStorage.setItem('myPokemons', JSON.stringify(arr))
+
+    closeModal()
+  }
   
   const { loading, error, data: { pokemon = {} } = {} } = useQuery(GET_POKEMON, {
     variables: { name: router.query.name },
@@ -151,11 +213,39 @@ export default function PokemonDetail() {
         height: '100vh'
       }}>
         <Modal show={show} closeModal={closeModal} nickname={nickname} catchedPokemon={catchedPokemon}>
+          <h3>
+            gotcha!<br/> 
+            {catchedPokemon.name} was caught!
+          </h3>
           <input 
             value={nickname} 
             onChange={(e) => setNickname(e.target.value)} 
             placeholder="Input Nickname"
           />
+          <div css={{
+            fontSize: '8pt'
+          }}>*nickname will be converted to uppercase</div>
+          <div css={{
+            color: 'rgb(219, 80, 74, 1)',
+            marginTop: '12px'
+          }}>
+            {errorMessage}
+          </div>
+          <PrimaryButton 
+            onClick={() => submit()}
+            type="button"
+            css={{
+              width: '100%',
+              marginTop: '12px'
+            }}
+
+            disabled={nickname != '' && errorMessage == '' ?
+            false
+            :
+            true}
+          >
+            Save to Bag
+          </PrimaryButton>
         </Modal>
         {
           loading ?
