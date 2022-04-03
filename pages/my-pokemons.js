@@ -52,7 +52,7 @@ const PrimaryButton = styled.button`
   }
 `
 
-export default function myPokemons() {
+export default function MyPokemons() {
   const [ownedPokemons, setOwnedPokemons] = React.useState([])
 
   useEffect(() => {
@@ -136,11 +136,12 @@ export default function myPokemons() {
                   color: 'white', 
                   display: 'flex', 
                   alignItems:'center', 
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  height: '90vh'
                 }}
               >
                 <div css={{textAlign: 'center'}}>
-                  you don't have any pokemon.<br/>
+                  you don&apos;t have any pokemon.<br/>
                   catch one in the wild!
                 </div>
               </div>
